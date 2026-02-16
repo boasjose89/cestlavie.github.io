@@ -97,7 +97,7 @@
 
     if (/android/i.test(userAgent)) {
         // Tenta abrir diretamente na aplicação Instagram no Android
-        btn.href = "intent://instagram.com/" + instaUser + "/#Intent;package=com.instagram.android;scheme=https;end";
+        btn.href = "intent://instagram.com/_u/" + instaUser + "/#Intent;package=com.instagram.android;scheme=https;end";
     } else {
         btn.href = webUrl;
     }
