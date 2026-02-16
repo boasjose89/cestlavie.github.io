@@ -95,23 +95,27 @@
         </div>
     </div>
     <script>
-        (function() {
-            const btn = document.getElementById('link-dinamico');
-            
-            // Verifica se é telemóvel (Android, iPhone, iPad)
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    (function() {
+        const btn = document.getElementById('link-dinamico');
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
-            if (isMobile) {
-                // Link para abrir diretamente na APP
-                btn.href = "intent://://instagram.com/c.estlavie.brunchesposende";
-                btn.target = "_blank";
-            } else {
-                // Link normal para abrir no COMPUTADOR (Browser)
-                btn.href = "https://www.instagram.com/c.estlavie.brunchesposende";
-                btn.target = "_blank";
-            }
-        })();
-    </script>
-
+        // Se for Android
+        if (/android/i.test(userAgent)) {
+            // Força a abertura no Chrome para evitar a Webview do Instagram
+            btn.href = "intent://://www.instagram.com";
+        } 
+        // Se for iOS (iPhone/iPad)
+        else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+            // No iOS usamos o link direto; o sistema decide se abre app ou browser
+            btn.href = "https://www.instagram.com/c.estlavie.brunchesposende";
+        } 
+        // Computador ou outros
+        else {
+            btn.href = "https://www.instagram.com/c.estlavie.brunchesposende";
+        }
+        
+        btn.target = "_blank";
+    })();
+</script>
 </body>
 </html>
