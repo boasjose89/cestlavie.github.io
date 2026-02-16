@@ -101,8 +101,9 @@
         // Se quiser forçar a APP no Android:
         if (/android/i.test(userAgent)) {
           
-            btn.onclick = function() {
-   window.open(webUrl, "_self");
+btn.addEventListener('click', function() {
+    window.location.href = webUrl; 
+});
 };
           
         } else {
