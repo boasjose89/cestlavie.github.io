@@ -5,26 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>C'est la Vie Esposende</title>
     <style>
-        * {
-            box-sizing: border-box; /* Garante que o padding não quebre a largura */
-        }
+        * { box-sizing: border-box; }
 
         body {
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background: #f2c3c2; /* Fundo escuro sólido para melhor performance mobile */
+            background: #f2c3c2; 
             color: white;
             display: flex;
             justify-content: center;
-            align-items: flex-start; /* Alinha ao topo para permitir scroll se necessário */
+            align-items: flex-start;
             min-height: 100vh;
             padding-top: 40px;
         }
 
         .container {
             width: 100%;
-            max-width: 400px; /* Limita a largura em desktops */
+            max-width: 400px;
             padding: 20px;
             text-align: center;
         }
@@ -35,13 +33,12 @@
             border-radius: 50%;
             margin-bottom: 10px;
             object-fit: cover;
-            
         }
 
         h1 {
             font-size: 1.1rem;
             margin-bottom: 30px;
-            color: #ccc;
+            color: #555; /* Corrigido para ser visível no fundo rosa */
         }
 
         .links-container {
@@ -53,28 +50,24 @@
 
         .link-button {
             display: block;
-            width: 100%; /* Ocupa a largura total do container */
+            width: 100%;
             background-color: #fff9f9;
-            color: black;
+            color: black; /* Corrigido: era font-color */
             padding: 16px;
             text-decoration: none;
             border-radius: 12px;
             font-size: 1rem;
             font-weight: 500;
-            font-color: black;
             transition: background 0.3s ease;
-           
         }
 
-        /* Feedback visual ao toque no telemóvel */
         .link-button:active {
-            background-color: #444;
+            background-color: #eee;
             transform: scale(0.98);
         }
 
-        /* Ajustes finos para ecrãs muito pequenos */
         @media (max-width: 320px) {
-            .logo { width: 70px; height: 70px; }
+            .logo { width: 100px; height: 100px; }
             .link-button { padding: 12px; font-size: 0.9rem; }
         }
     </style>
@@ -83,39 +76,39 @@
 
     <div class="container">
         <img src="logo.jpg" alt="Logo" class="logo">
-        <h1>@teunome</h1>
+        <h1>@c.estlavie.brunchesposende</h1>
 
         <div class="links-container">
             <a href="#" class="link-button">Menu</a>
-           
-            <a href="google.pt" id="link-dinamico" class="link-button">Instagram</a>
+            <!-- O link será injetado pelo JavaScript abaixo -->
+            <a href="#" id="link-dinamico" class="link-button">Instagram</a>
             <a href="#" class="link-button">Facebook</a>
             <a href="#" class="link-button">Google Review</a>
             <a href="#" class="link-button">Tripadvisor</a>
         </div>
     </div>
+
     <script>
     (function() {
         const btn = document.getElementById('link-dinamico');
         const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        const profileUrl = "www.instagram.com/c.estlavie.brunchesposende";
 
-        // Se for Android
+        // Lógica para Android: Força abertura no Chrome
         if (/android/i.test(userAgent)) {
-            // Força a abertura no Chrome para evitar a Webview do Instagram
-            btn.href = "intent://://www.instagram.com";
+            btn.href = "intent://" + profileUrl + "/#Intent;scheme=https;package=com.android.chrome;end";
         } 
-        // Se for iOS (iPhone/iPad)
+        // Lógica para iOS (iPhone/iPad)
         else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-            // No iOS usamos o link direto; o sistema decide se abre app ou browser
-            btn.href = "https://www.instagram.com/c.estlavie.brunchesposende";
+            btn.href = "https://" + profileUrl;
         } 
-        // Computador ou outros
+        // Desktop
         else {
-            btn.href = "https://www.instagram.com/c.estlavie.brunchesposende";
+            btn.href = "https://" + profileUrl;
         }
         
         btn.target = "_blank";
     })();
-</script>
+    </script>
 </body>
 </html>
