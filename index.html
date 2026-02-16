@@ -104,17 +104,18 @@
         
         // Pequeno atraso para garantir que, se a app não abrir, 
         // o link aponte para a web como segurança
-        setTimeout(function() {
-            btn.href = "https://www.google.pt";
-        }, 500);
+      
     } else {
         // iOS e Desktop continuam com a URL padrão que funciona bem
-        btn.href = "https://www.google.ptt";
+        btn.href = webUrl;
     }
     
     btn.target = "_blank";
     btn.rel = "noopener noreferrer";
 })();
+
+
+ 
     </script>
 </body>
 </html>
