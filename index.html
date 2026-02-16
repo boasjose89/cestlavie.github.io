@@ -88,34 +88,30 @@
         </div>
     </div>
 
-     <script>
+  <script>
     (function() {
-    const btn = document.getElementById('link-dinamico');
-    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-    const instaUser = "c.estlavie.brunchesposende";
-    
-    const webUrl = "https://www.instagram.com/" + instaUser + "/";
-    const appUri = "instagram://user?username=" + instaUser;
-
-    if (/android/i.test(userAgent)) {
-        // Tenta abrir via esquema nativo. Se falhar (app não instalada), 
-        // o navegador Android geralmente lida com o fallback para a Web.
-        btn.href = appUri;
+        const btn = document.getElementById('link-dinamico');
+        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        const instaUser = "c.estlavie.brunchesposende";
         
-        // Pequeno atraso para garantir que, se a app não abrir, 
-        // o link aponte para a web como segurança
-      
-    } else {
-        // iOS e Desktop continuam com a URL padrão que funciona bem
-        btn.href = webUrl;
-    }
-    
-    btn.target = "_blank";
-    btn.rel = "noopener noreferrer";
-})();
+        const webUrl = "https://www.instagram.com/" + instaUser + "/";
+        const appUri = "instagram://user?username=" + instaUser;
 
-
- 
+        // Melhor abordagem: iOS e Android lidam bem com URLs universais hoje em dia
+        // Se quiser forçar a APP no Android:
+        if (/android/i.test(userAgent)) {
+            btn.href = appUri;
+            // Fallback para Web se a app não abrir em 1.5s
+            setTimeout(function() {
+                window.location.href = webUrl;
+            }, 1500);
+        } else {
+            btn.href = webUrl;
+        }
+        
+        btn.target = "_blank";
+        btn.rel = "noopener noreferrer";
+    })();
     </script>
 </body>
 </html>
