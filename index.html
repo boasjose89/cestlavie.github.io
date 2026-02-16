@@ -93,11 +93,11 @@
     const btn = document.getElementById('link-dinamico');
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
     const instaUser = "c.estlavie.brunchesposende";
-    const webUrl = "https://www.instagram.com" + instaUser;
+    const webUrl = "https://www.instagram.com/" + instaUser;
 
     if (/android/i.test(userAgent)) {
         // Tenta abrir diretamente na aplicação Instagram no Android
-        btn.href = "intent://://instagram.com" + instaUser + "/#Intent;package=com.instagram.android;scheme=https;end";
+        btn.href = "intent://instagram.com/" + instaUser + "/#Intent;package=com.instagram.android;scheme=https;end";
     } else {
         btn.href = webUrl;
     }
