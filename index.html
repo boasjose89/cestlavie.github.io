@@ -90,21 +90,20 @@
 
      <script>
     (function() {
-        const btn = document.getElementById('link-dinamico');
-        const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-        const destination = "https://www.instagram.com/c.estlavie.brunchesposende";
+    const btn = document.getElementById('link-dinamico');
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+    const instaUser = "c.estlavie.brunchesposende";
+    const webUrl = "https://www.instagram.com" + instaUser;
 
-        if (/android/i.test(userAgent)) {
-            // O segredo está no "/url?q=" para o Google processar o redirecionamento
-            btn.href = "https://www.google.com/url?q=" + encodeURIComponent(destination);
-        } 
-        else {
-            // iOS (iPhone) e Desktop abrem normalmente
-            btn.href = destination;
-        }
-        
-        btn.target = "_blank";
-    })();
+    if (/android/i.test(userAgent)) {
+        // Tenta abrir diretamente na aplicação Instagram no Android
+        btn.href = "intent://://instagram.com" + instaUser + "/#Intent;package=com.instagram.android;scheme=https;end";
+    } else {
+        btn.href = webUrl;
+    }
+    btn.target = "_blank";
+    btn.rel = "noopener noreferrer";
+})();
     </script>
 </body>
 </html>
