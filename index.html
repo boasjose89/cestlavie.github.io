@@ -101,7 +101,9 @@
         // Se quiser forçar a APP no Android:
         if (/android/i.test(userAgent)) {
           
-             btn.href = appUri;
+            btn.onclick = function() {
+    window.location.href = "https://www.google.pt";
+};
           
         } else {
             btn.href = webUrl;
