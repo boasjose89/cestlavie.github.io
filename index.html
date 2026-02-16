@@ -1,78 +1,96 @@
 <!DOCTYPE html>
 <html lang="pt-pt">
 <head>
-<style>
-    body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f0f2f5; /* Cor de fundo suave */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-}
-
-.container {
-    text-align: center;
-    width: 90%;
-    max-width: 400px;
-}
-
-.logo {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%; /* Faz o logo ficar circular */
-    margin-bottom: 20px;
-    object-fit: cover;
-}
-
-h1 {
-    font-size: 1.2rem;
-    color: #333;
-    margin-bottom: 30px;
-}
-
-.links-container {
-    display: flex;
-    flex-direction: column;
-    gap: 15px; /* Espaço entre os botões */
-}
-
-.link-button {
-    background-color: #007bff; /* Cor azul clássica */
-    color: white;
-    padding: 15px;
-    text-decoration: none;
-    border-radius: 8px;
-    font-weight: 600;
-    transition: transform 0.2s, background-color 0.2s;
-    border: 1px solid transparent;
-}
-
-.link-button:hover {
-    background-color: #e9dad2;
-    transform: scale(1.02); /* Efeito de zoom leve ao passar o rato */
-}
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Os Meus Links</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Link Tree Responsivo</title>
+    <style>
+        * {
+            box-sizing: border-box; /* Garante que o padding não quebre a largura */
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #0e0e0e; /* Fundo escuro sólido para melhor performance mobile */
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Alinha ao topo para permitir scroll se necessário */
+            min-height: 100vh;
+            padding-top: 40px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 400px; /* Limita a largura em desktops */
+            padding: 20px;
+            text-align: center;
+        }
+
+        .logo {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+            object-fit: cover;
+            border: 2px solid #333;
+        }
+
+        h1 {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            color: #ccc;
+        }
+
+        .links-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .link-button {
+            display: block;
+            width: 100%; /* Ocupa a largura total do container */
+            background-color: #222;
+            color: white;
+            padding: 16px;
+            text-decoration: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: background 0.3s ease;
+            border: 1px solid #333;
+        }
+
+        /* Feedback visual ao toque no telemóvel */
+        .link-button:active {
+            background-color: #444;
+            transform: scale(0.98);
+        }
+
+        /* Ajustes finos para ecrãs muito pequenos */
+        @media (max-width: 320px) {
+            .logo { width: 70px; height: 70px; }
+            .link-button { padding: 12px; font-size: 0.9rem; }
+        }
     </style>
 </head>
 <body>
+
     <div class="container">
-        <!-- Substitui o URL da imagem pelo teu logótipo -->
-        <img src="https://via.placeholder.com" alt="Logótipo" class="logo">
-        
-        <h1>@TeuUsuario</h1>
+        <img src="logo.jpg" alt="Logo" class="logo">
+        <h1>@teunome</h1>
 
         <div class="links-container">
-            <a href="https://link1.com" target="_blank" class="link-button">Website Oficial</a>
-            <a href="https://link2.com" target="_blank" class="link-button">Instagram</a>
-            <a href="https://link3.com" target="_blank" class="link-button">WhatsApp</a>
-            <a href="https://link4.com" target="_blank" class="link-button">Portfólio</a>
+            <a href="#" class="link-button">Link Importante 1</a>
+            <a href="#" class="link-button">Link Importante 2</a>
+            <a href="#" class="link-button">Link Importante 3</a>
+            <a href="#" class="link-button">Link Importante 4</a>
         </div>
     </div>
+
 </body>
 </html>
