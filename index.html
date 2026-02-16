@@ -88,18 +88,18 @@
         </div>
     </div>
 
-    <script>
+     <script>
     (function() {
         const btn = document.getElementById('link-dinamico');
         const userAgent = navigator.userAgent || navigator.vendor || window.opera;
         const destination = "https://www.instagram.com/c.estlavie.brunchesposende";
 
         if (/android/i.test(userAgent)) {
-            // Método de redirecionamento via Google (força saída da App)
-            btn.href = "https://www.google.com" + encodeURIComponent(destination);
+            // O segredo está no "/url?q=" para o Google processar o redirecionamento
+            btn.href = "https://www.google.com/url?q=" + encodeURIComponent(destination);
         } 
         else {
-            // iOS e Desktop
+            // iOS (iPhone) e Desktop abrem normalmente
             btn.href = destination;
         }
         
