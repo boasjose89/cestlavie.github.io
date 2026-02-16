@@ -93,11 +93,16 @@
         const btn = document.getElementById('link-dinamico');
         const userAgent = navigator.userAgent || navigator.vendor || window.opera;
         const profileUrl = "www.instagram.com/c.estlavie.brunchesposende";
+        const instagramUrl = "www.instagram.com/c.estlavie.brunchesposende";
 
-        // Lógica para Android: Força abertura no Chrome
-        if (/android/i.test(userAgent)) {
-            btn.href = "intent://" + profileUrl + "/#Intent;scheme=https;package=com.android.chrome;end";
-        } 
+     
+          if (/android/i.test(userAgent)) {
+            // TRUQUE 1: Google Search Redirect (Engana o sistema para abrir no browser)
+            btn.href = "https://www.google.com" + encodeURIComponent(instagramUrl);
+            
+            // TRUQUE 2: Forçar o sistema a tratar como ficheiro (faz o browser externo abrir)
+            btn.setAttribute("download", "");
+              
         // Lógica para iOS (iPhone/iPad)
         else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
             btn.href = "https://" + profileUrl;
