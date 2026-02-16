@@ -100,11 +100,9 @@
         // Melhor abordagem: iOS e Android lidam bem com URLs universais hoje em dia
         // Se quiser forçar a APP no Android:
         if (/android/i.test(userAgent)) {
-            btn.href = appUri;
-            // Fallback para Web se a app não abrir em 1.5s
-            setTimeout(function() {
-                window.location.href = webUrl;
-            }, 1500);
+          
+              window.location.href = webUrl;
+          
         } else {
             btn.href = webUrl;
         }
