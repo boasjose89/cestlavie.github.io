@@ -100,9 +100,8 @@
         // Melhor abordagem: iOS e Android lidam bem com URLs universais hoje em dia
         // Se quiser forçar a APP no Android:
         if (/android/i.test(userAgent)) {
-          
-btn.addEventListener('click', function() {
-    window.location.href = webUrl; 
+            
+        btn.href = appUri;
 });
 };
           
