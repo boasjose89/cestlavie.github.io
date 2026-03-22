@@ -2,32 +2,35 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Menu Digital</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu com Zoom</title>
     <style>
         :root { --accent: #89b4fa; --bg: #0b0b10; }
         body { font-family: sans-serif; margin: 0; background: var(--bg); color: white; overflow: hidden; }
 
-        /* Área da Imagem do Menu */
-        #menu-container {
+        /* Contentor que permite zoom e arrasto */
+        #viewport {
             width: 100vw;
             height: 100vh;
-            overflow-y: auto;
+            overflow: auto; /* Permite scroll se a imagem for maior que o ecrã */
             display: flex;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: flex-start;
-            padding-bottom: 100px; /* Espaço para o menu inferior */
+            -webkit-overflow-scrolling: touch;
         }
 
+        /* A imagem começa na largura do ecrã, mas o utilizador pode ampliar */
         #menu-img {
             width: 100%;
-            max-width: 600px; /* Largura ideal para leitura */
+            min-width: 100%;
             height: auto;
             display: block;
+            transition: transform 0.2s ease;
+            transform-origin: top left;
             box-shadow: 0 0 30px rgba(0,0,0,0.5);
         }
 
-        /* Menu Inferior Estilizado */
+        /* Menu Inferior Fixo */
         #nav-bar {
             position: fixed;
             bottom: 20px;
@@ -37,8 +40,8 @@
             backdrop-filter: blur(10px);
             border-radius: 25px;
             padding: 10px 15px;
-            width: 90%;
-            z-index: 100;
+            width: 85%;
+            z-index: 1000;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
@@ -65,14 +68,14 @@
 
         .btn-menu:active { background: var(--accent); color: #11111b; }
         
-        .label { font-size: 11px; color: var(--accent); text-align: center; text-transform: uppercase; margin-bottom: 5px; opacity: 0.7; }
+        .label { font-size: 11px; color: var(--accent); text-align: center; text-transform: uppercase; margin-bottom: 5px; opacity: 0.8; }
     </style>
 </head>
 <body>
 
-    <div id="menu-container">
-        <!-- Imagem inicial -->
-        <img id="menu-img" src="p1.jpg" alt="Página do Menu">
+    <div id="viewport">
+        <!-- Imagem do menu -->
+        <img id="menu-img" src="p1.jpg" alt="Menu">
     </div>
 
     <nav id="nav-bar">
@@ -94,14 +97,28 @@
     <script>
         function changeImg(src) {
             const img = document.getElementById('menu-img');
-            const container = document.getElementById('menu-container');
+            const viewport = document.getElementById('viewport');
             
             // Troca a imagem
             img.src = src;
             
-            // Volta ao topo suavemente
-            container.scrollTo({ top: 0, behavior: 'smooth' });
+            // Faz reset ao scroll e ao zoom ao mudar de categoria
+            viewport.scrollTo(0, 0);
         }
+
+        // Script simples para permitir zoom de duplo toque no telemóvel
+        let lastClick = 0;
+        document.getElementById('menu-img').addEventListener('click', function(e) {
+            let date = new Date().getTime();
+            if (date - lastClick < 300) { // Double click/tap
+                if (this.style.width === "200%") {
+                    this.style.width = "100%";
+                } else {
+                    this.style.width = "200%";
+                }
+            }
+            lastClick = date;
+        });
     </script>
 
 </body>
