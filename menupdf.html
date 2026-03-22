@@ -2,105 +2,135 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu PDF Simples</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Menu PDF Mobile</title>
     <style>
-        :root { --accent: #89b4fa; --bg: #11111b; }
-        body { font-family: sans-serif; margin: 0; background: var(--bg); color: white; overflow: hidden; }
+        :root { --accent: #89b4fa; --bg: #0b0b10; }
+        body { font-family: sans-serif; margin: 0; background: var(--bg); color: white; overflow-x: hidden; }
 
-        /* Contentor do PDF (ocupa o ecrã todo) */
-        #viewer-container {
+        /* Contentor do PDF para Mobile */
+        #pdf-viewer-container {
             width: 100vw;
             height: 100vh;
-            border: none;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 10px;
+            -webkit-overflow-scrolling: touch; /* Scroll suave no iPhone */
         }
 
-        /* Menu Flutuante Minimalista */
+        canvas { 
+            max-width: 100%; 
+            height: auto !important; 
+            margin-bottom: 80px; 
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            background: white;
+        }
+
+        /* Menu Inferior Fixo */
         #pdf-menu {
             position: fixed;
-            bottom: 30px;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
             background: rgba(30, 30, 46, 0.95);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 20px;
-            padding: 12px 25px;
+            border-radius: 25px;
+            padding: 10px 20px;
             z-index: 9999;
+            width: 85%;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
         }
 
         #links-container {
             display: flex;
             gap: 10px;
-            max-height: 0;
-            opacity: 0;
             overflow-x: auto;
-            transition: 0.4s;
+            padding: 10px 0;
             margin: 0;
-            padding: 0;
             list-style: none;
+            scrollbar-width: none; /* Esconde scroll no Firefox */
         }
-
-        #pdf-menu:hover #links-container {
-            max-height: 100px;
-            opacity: 1;
-            margin-top: 15px;
-            padding-bottom: 5px;
-        }
+        #links-container::-webkit-scrollbar { display: none; } /* Esconde scroll no Chrome/Safari */
 
         .menu-item {
-            padding: 8px 15px;
+            padding: 10px 18px;
             background: rgba(255,255,255,0.1);
-            border-radius: 10px;
-            cursor: pointer;
-            white-space: nowrap;
+            border-radius: 15px;
             font-size: 14px;
             color: white;
-            text-decoration: none;
-            transition: 0.2s;
+            white-space: nowrap;
+            cursor: pointer;
+            border: none;
         }
 
-        .menu-item:hover {
-            background: var(--accent);
-            color: #11111b;
-        }
-
-        h3 { margin: 0; font-size: 14px; color: var(--accent); cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
-        
-        /* Ajuste para scrollbar do menu */
-        #links-container::-webkit-scrollbar { height: 3px; }
-        #links-container::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+        .menu-item:active { background: var(--accent); color: #11111b; }
+        h3 { margin: 0; font-size: 13px; color: var(--accent); text-transform: uppercase; opacity: 0.8; }
     </style>
+    <!-- Biblioteca PDF.js (Versão compatível) -->
+    <script src="https://cdnjs.cloudflare.com"></script>
 </head>
 <body>
 
-    <!-- O PDF é carregado aqui via iFrame nativa (Zero erros de CSP) -->
-    <iframe id="pdf-frame" src="menu.pdf#toolbar=0&navpanes=0" class="viewer-container" style="width:100%; height:100vh; border:none;"></iframe>
+    <div id="pdf-viewer-container">
+        <canvas id="pdf-canvas"></canvas>
+    </div>
 
     <nav id="pdf-menu">
-        <h3>Índice do Menu ▾</h3>
-        <ul id="links-container">
-            <!-- ADICIONA OU ALTERA AS TUAS PÁGINAS AQUI -->
-            <li><a class="menu-item" href="javascript:void(0)" onclick="goToPage(1)">Capa</a></li>
-            <li><a class="menu-item" href="javascript:void(0)" onclick="goToPage(3)">Entradas</a></li>
-            <li><a class="menu-item" href="javascript:void(0)" onclick="goToPage(7)">Pratos Peixe</a></li>
-            <li><a class="menu-item" href="javascript:void(0)" onclick="goToPage(12)">Pratos Carne</a></li>
-            <li><a class="menu-item" href="javascript:void(0)" onclick="goToPage(18)">Bebidas</a></li>
-        </ul>
+        <h3>Menu ▾</h3>
+        <div id="links-container">
+            <!-- CONFIGURA AS PÁGINAS AQUI -->
+            <button class="menu-item" onclick="changePage(1)">Início</button>
+            <button class="menu-item" onclick="changePage(3)">Entradas</button>
+            <button class="menu-item" onclick="changePage(7)">Peixe</button>
+            <button class="menu-item" onclick="changePage(12)">Carne</button>
+            <button class="menu-item" onclick="changePage(18)">Bebidas</button>
+        </div>
     </nav>
 
     <script>
-        const pdfUrl = 'menu.pdf';
+        const url = 'menu.pdf';
+        const pdfjsLib = window['pdfjs-dist/build/pdf'];
+        
+        // CORREÇÃO PARA CSP: Não usamos worker externo
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com';
 
-        function goToPage(num) {
-            const frame = document.getElementById('pdf-frame');
-            // Atualiza o SRC com o parâmetro de página #page=X
-            // O navegador trata da navegação interna automaticamente
-            frame.src = pdfUrl + "#page=" + num + "&toolbar=0&navpanes=0";
+        let pdfDoc = null;
+        const canvas = document.getElementById('pdf-canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Carrega o PDF
+        pdfjsLib.getDocument(url).promise.then(pdf => {
+            pdfDoc = pdf;
+            changePage(1);
+        }).catch(err => {
+            console.error("Erro:", err);
+            alert("Não foi possível carregar o menu.pdf. Verifica o nome do ficheiro.");
+        });
+
+        function changePage(num) {
+            if (!pdfDoc) return;
+            pdfDoc.getPage(num).then(page => {
+                // Ajusta o zoom para a largura do telemóvel
+                const viewport = page.getViewport({ scale: 1.0 });
+                const screenWidth = window.innerWidth;
+                const scale = screenWidth / viewport.width;
+                const scaledViewport = page.getViewport({ scale: scale });
+
+                canvas.height = scaledViewport.height;
+                canvas.width = scaledViewport.width;
+
+                page.render({
+                    canvasContext: ctx,
+                    viewport: scaledViewport
+                });
+                
+                // Volta ao topo
+                document.getElementById('pdf-viewer-container').scrollTop = 0;
+            });
         }
     </script>
-
 </body>
 </html>
