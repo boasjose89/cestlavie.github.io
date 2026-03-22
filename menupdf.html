@@ -3,33 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Menu PDF Mobile</title>
+    <title>Menu Digital</title>
     <style>
         :root { --accent: #89b4fa; --bg: #0b0b10; }
-        body { font-family: sans-serif; margin: 0; background: var(--bg); color: white; overflow-x: hidden; }
+        body { font-family: sans-serif; margin: 0; background: var(--bg); color: white; overflow: hidden; }
 
-        /* Contentor do PDF para Mobile */
-        #pdf-viewer-container {
+        /* Área da Imagem do Menu */
+        #menu-container {
             width: 100vw;
             height: 100vh;
             overflow-y: auto;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 10px;
-            -webkit-overflow-scrolling: touch; /* Scroll suave no iPhone */
+            justify-content: center;
+            align-items: flex-start;
+            padding-bottom: 100px; /* Espaço para o menu inferior */
         }
 
-        canvas { 
-            max-width: 100%; 
-            height: auto !important; 
-            margin-bottom: 80px; 
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            background: white;
+        #menu-img {
+            width: 100%;
+            max-width: 600px; /* Largura ideal para leitura */
+            height: auto;
+            display: block;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
         }
 
-        /* Menu Inferior Fixo */
-        #pdf-menu {
+        /* Menu Inferior Estilizado */
+        #nav-bar {
             position: fixed;
             bottom: 20px;
             left: 50%;
@@ -37,100 +36,69 @@
             background: rgba(30, 30, 46, 0.95);
             backdrop-filter: blur(10px);
             border-radius: 25px;
-            padding: 10px 20px;
-            z-index: 9999;
-            width: 85%;
-            text-align: center;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            padding: 10px 15px;
+            width: 90%;
+            z-index: 100;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        #links-container {
+        .scroll-wrapper {
             display: flex;
             gap: 10px;
             overflow-x: auto;
-            padding: 10px 0;
-            margin: 0;
-            list-style: none;
-            scrollbar-width: none; /* Esconde scroll no Firefox */
+            padding: 5px 0;
+            scrollbar-width: none;
         }
-        #links-container::-webkit-scrollbar { display: none; } /* Esconde scroll no Chrome/Safari */
+        .scroll-wrapper::-webkit-scrollbar { display: none; }
 
-        .menu-item {
-            padding: 10px 18px;
+        .btn-menu {
+            padding: 12px 20px;
             background: rgba(255,255,255,0.1);
+            border: none;
             border-radius: 15px;
-            font-size: 14px;
             color: white;
             white-space: nowrap;
+            font-size: 14px;
+            font-weight: bold;
             cursor: pointer;
-            border: none;
         }
 
-        .menu-item:active { background: var(--accent); color: #11111b; }
-        h3 { margin: 0; font-size: 13px; color: var(--accent); text-transform: uppercase; opacity: 0.8; }
+        .btn-menu:active { background: var(--accent); color: #11111b; }
+        
+        .label { font-size: 11px; color: var(--accent); text-align: center; text-transform: uppercase; margin-bottom: 5px; opacity: 0.7; }
     </style>
-    <!-- Biblioteca PDF.js (Versão compatível) -->
-    <script src="https://cdnjs.cloudflare.com"></script>
 </head>
 <body>
 
-    <div id="pdf-viewer-container">
-        <canvas id="pdf-canvas"></canvas>
+    <div id="menu-container">
+        <!-- Imagem inicial -->
+        <img id="menu-img" src="p1.jpg" alt="Página do Menu">
     </div>
 
-    <nav id="pdf-menu">
-        <h3>Menu ▾</h3>
-        <div id="links-container">
-            <!-- CONFIGURA AS PÁGINAS AQUI -->
-            <button class="menu-item" onclick="changePage(1)">Início</button>
-            <button class="menu-item" onclick="changePage(3)">Entradas</button>
-            <button class="menu-item" onclick="changePage(7)">Peixe</button>
-            <button class="menu-item" onclick="changePage(12)">Carne</button>
-            <button class="menu-item" onclick="changePage(18)">Bebidas</button>
+    <nav id="nav-bar">
+        <div class="label">Categorias</div>
+        <div class="scroll-wrapper">
+            <!-- Altera os nomes e os ficheiros de imagem aqui -->
+            <button class="btn-menu" onclick="changeImg('p1.jpg')">Início</button>
+            <button class="btn-menu" onclick="changeImg('p3.jpg')">Entradas</button>
+            <button class="btn-menu" onclick="changeImg('p7.jpg')">Peixe</button>
+            <button class="btn-menu" onclick="changeImg('p12.jpg')">Carne</button>
+            <button class="btn-menu" onclick="changeImg('p18.jpg')">Bebidas</button>
         </div>
     </nav>
 
     <script>
-        const url = 'menu.pdf';
-        const pdfjsLib = window['pdfjs-dist/build/pdf'];
-        
-        // CORREÇÃO PARA CSP: Não usamos worker externo
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com';
-
-        let pdfDoc = null;
-        const canvas = document.getElementById('pdf-canvas');
-        const ctx = canvas.getContext('2d');
-
-        // Carrega o PDF
-        pdfjsLib.getDocument(url).promise.then(pdf => {
-            pdfDoc = pdf;
-            changePage(1);
-        }).catch(err => {
-            console.error("Erro:", err);
-            alert("Não foi possível carregar o menu.pdf. Verifica o nome do ficheiro.");
-        });
-
-        function changePage(num) {
-            if (!pdfDoc) return;
-            pdfDoc.getPage(num).then(page => {
-                // Ajusta o zoom para a largura do telemóvel
-                const viewport = page.getViewport({ scale: 1.0 });
-                const screenWidth = window.innerWidth;
-                const scale = screenWidth / viewport.width;
-                const scaledViewport = page.getViewport({ scale: scale });
-
-                canvas.height = scaledViewport.height;
-                canvas.width = scaledViewport.width;
-
-                page.render({
-                    canvasContext: ctx,
-                    viewport: scaledViewport
-                });
-                
-                // Volta ao topo
-                document.getElementById('pdf-viewer-container').scrollTop = 0;
-            });
+        function changeImg(src) {
+            const img = document.getElementById('menu-img');
+            const container = document.getElementById('menu-container');
+            
+            // Troca a imagem
+            img.src = src;
+            
+            // Volta ao topo suavemente
+            container.scrollTo({ top: 0, behavior: 'smooth' });
         }
     </script>
+
 </body>
 </html>
