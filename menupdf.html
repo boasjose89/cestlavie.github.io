@@ -3,103 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu PDF Seguro</title>
+    <title>Menu PDF Simples</title>
     <style>
-        :root { --accent: #89b4fa; --text: #ffffff; }
-        body { font-family: sans-serif; margin: 0; background: #0b0b10; color: white; overflow-x: hidden; }
-        #pdf-viewer-container { width: 100vw; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; align-items: center; padding-top: 20px; }
-        canvas { box-shadow: 0 0 40px rgba(0,0,0,0.8); max-width: 95%; background: white; margin-bottom: 100px; }
-        #pdf-sidebar {
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
-            background: rgba(30, 30, 46, 0.95); backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;
-            padding: 12px 25px; z-index: 9999; text-align: center; min-width: 180px;
+        :root { --accent: #89b4fa; --bg: #11111b; }
+        body { font-family: sans-serif; margin: 0; background: var(--bg); color: white; overflow: hidden; }
+
+        /* Contentor do PDF (ocupa o ecrã todo) */
+        #viewer-container {
+            width: 100vw;
+            height: 100vh;
+            border: none;
         }
-        #outline-list { list-style: none; padding: 0; margin: 0; display: flex; gap: 10px; max-height: 0; opacity: 0; overflow-x: auto; transition: 0.4s; }
-        #pdf-sidebar:hover #outline-list { max-height: 150px; opacity: 1; margin-top: 15px; padding-bottom: 5px; }
-        .menu-item { padding: 8px 15px; background: rgba(255,255,255,0.1); border-radius: 10px; cursor: pointer; white-space: nowrap; font-size: 14px; color: var(--text); }
-        .menu-item:hover { background: var(--accent); color: #11111b; }
-        h3 { margin: 0; font-size: 14px; color: var(--accent); cursor: pointer; text-transform: uppercase; }
-        #outline-list::-webkit-scrollbar { height: 3px; }
-        #outline-list::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+
+        /* Menu Flutuante Minimalista */
+        #pdf-menu {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(30, 30, 46, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 12px 25px;
+            z-index: 9999;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        #links-container {
+            display: flex;
+            gap: 10px;
+            max-height: 0;
+            opacity: 0;
+            overflow-x: auto;
+            transition: 0.4s;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        #pdf-menu:hover #links-container {
+            max-height: 100px;
+            opacity: 1;
+            margin-top: 15px;
+            padding-bottom: 5px;
+        }
+
+        .menu-item {
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 14px;
+            color: white;
+            text-decoration: none;
+            transition: 0.2s;
+        }
+
+        .menu-item:hover {
+            background: var(--accent);
+            color: #11111b;
+        }
+
+        h3 { margin: 0; font-size: 14px; color: var(--accent); cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
+        
+        /* Ajuste para scrollbar do menu */
+        #links-container::-webkit-scrollbar { height: 3px; }
+        #links-container::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
     </style>
-    <!-- Versão Legacy 2.x -->
-    <script src="https://cdnjs.cloudflare.com"></script>
 </head>
 <body>
 
-    <div id="pdf-viewer-container">
-        <canvas id="pdf-canvas"></canvas>
-    </div>
+    <!-- O PDF é carregado aqui via iFrame nativa (Zero erros de CSP) -->
+    <iframe id="pdf-frame" src="menu.pdf#toolbar=0&navpanes=0" class="viewer-container" style="width:100%; height:100vh; border:none;"></iframe>
 
-    <nav id="pdf-sidebar">
-        <h3 id="menu-title">A carregar...</h3>
-        <ul id="outline-list"></ul>
+    <nav id="pdf-menu">
+        <h3>Índice do Menu ▾</h3>
+        <ul id="links-container">
+            <!-- ADICIONA OU ALTERA AS TUAS PÁGINAS AQUI -->
+            <li><a class="menu-item" href="javascript:void(0)" onclick="goToPage(1)">Capa</a></li>
+            <li><a class="menu-item" href="javascript:void(0)" onclick="goToPage(3)">Entradas</a></li>
+            <li><a class="menu-item" href="javascript:void(0)" onclick="goToPage(7)">Pratos Peixe</a></li>
+            <li><a class="menu-item" href="javascript:void(0)" onclick="goToPage(12)">Pratos Carne</a></li>
+            <li><a class="menu-item" href="javascript:void(0)" onclick="goToPage(18)">Bebidas</a></li>
+        </ul>
     </nav>
 
     <script>
-        const pdfUrl = 'menu.pdf'; 
+        const pdfUrl = 'menu.pdf';
 
-        window.onload = function() {
-            const pdfjsLib = window['pdfjs-dist/build/pdf'];
-            
-            // DESATIVA O WORKER EXTERNO (Isso evita erros de CSP em muitos servidores)
-            pdfjsLib.GlobalWorkerOptions.workerSrc = ''; 
-
-            const list = document.getElementById('outline-list');
-            const title = document.getElementById('menu-title');
-            const canvas = document.getElementById('pdf-canvas');
-            const ctx = canvas.getContext('2d');
-            let pdfDoc = null;
-
-            // Carregamento com restrições máximas de segurança
-            const loadingTask = pdfjsLib.getDocument({
-                url: pdfUrl,
-                disableRange: true,
-                disableStream: true,
-                isEvalSupported: false // BLOQUEIA O USO DE EVAL
-            });
-
-            loadingTask.promise.then(function(pdf) {
-                pdfDoc = pdf;
-                renderPage(1);
-                return pdf.getOutline();
-            }).then(function(outline) {
-                list.innerHTML = '';
-                if (outline && outline.length > 0) {
-                    outline.forEach(function(item) {
-                        const li = document.createElement('li');
-                        li.className = 'menu-item';
-                        li.textContent = item.title;
-                        li.onclick = function() { navigateTo(item.dest); };
-                        list.appendChild(li);
-                    });
-                    title.textContent = "Índice ▾";
-                } else {
-                    title.textContent = "PDF sem índice";
-                }
-            }).catch(function(err) {
-                title.textContent = "Erro de Acesso";
-                console.error("Erro:", err);
-            });
-
-            function navigateTo(dest) {
-                if (!dest) return;
-                pdfDoc.getPageIndex(dest).then(function(idx) {
-                    renderPage(idx + 1);
-                    document.getElementById('pdf-viewer-container').scrollTop = 0;
-                }).catch(function(e) { console.error(e); });
-            }
-
-            function renderPage(num) {
-                pdfDoc.getPage(num).then(function(page) {
-                    const viewport = page.getViewport({ scale: 1.5 });
-                    canvas.height = viewport.height;
-                    canvas.width = viewport.width;
-                    page.render({ canvasContext: ctx, viewport: viewport });
-                });
-            }
-        };
+        function goToPage(num) {
+            const frame = document.getElementById('pdf-frame');
+            // Atualiza o SRC com o parâmetro de página #page=X
+            // O navegador trata da navegação interna automaticamente
+            frame.src = pdfUrl + "#page=" + num + "&toolbar=0&navpanes=0";
+        }
     </script>
+
 </body>
 </html>
