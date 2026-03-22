@@ -3,87 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu Galeria com Zoom</title>
+    <title>Menu Interativo Fluido</title>
     
-    <!-- Estilos da Galeria (PhotoSwipe) -->
+    <!-- Estilos da Galeria (Zoom) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com">
     
     <style>
-        :root { --accent: #89b4fa; --bg: #0b0b10; }
-        body { font-family: sans-serif; margin: 0; background: var(--bg); color: white; }
-
-        /* Grelha da Galeria */
-        .gallery-container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr); /* 2 colunas no mobile */
-            gap: 10px;
-            padding: 15px;
-            padding-bottom: 100px; /* Espaço para o menu */
+        :root { --accent: #89b4fa; --bg: #0b0b10; --card: #1e1e2e; }
+        
+        body { 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            margin: 0; 
+            background: var(--bg); 
+            color: white; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        .gallery-item {
+        header { padding: 30px 20px; text-align: center; }
+        header h1 { margin: 0; font-size: 1.5rem; color: var(--accent); }
+        header p { margin: 5px 0 0; opacity: 0.6; font-size: 0.9rem; }
+
+        /* Lista de Imagens Fluida */
+        .menu-feed {
             width: 100%;
-            border-radius: 10px;
+            max-width: 500px;
+            padding: 0 15px 120px;
+            box-sizing: border-box;
+        }
+
+        .menu-card {
+            background: var(--card);
+            border-radius: 20px;
+            margin-bottom: 25px;
             overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease;
             cursor: pointer;
-            transition: transform 0.2s;
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
-        .gallery-item:active { transform: scale(0.95); }
-        .gallery-item img { width: 100%; display: block; }
+        .menu-card:active { transform: scale(0.98); }
 
-        /* Menu Inferior Fixo */
+        .menu-card img {
+            width: 100%;
+            display: block;
+            height: auto;
+        }
+
+        .card-info {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-info span { font-weight: 600; font-size: 0.9rem; }
+        .zoom-icon { color: var(--accent); font-size: 0.8rem; border: 1px solid var(--accent); padding: 4px 8px; border-radius: 10px; }
+
+        /* Menu de Navegação Inferior */
         #nav-bar {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: rgba(30, 30, 46, 0.95); backdrop-filter: blur(10px);
-            border-radius: 25px; padding: 12px; width: 85%; z-index: 100;
-            text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: fixed; bottom: 25px; 
+            background: rgba(30, 30, 46, 0.8);
+            backdrop-filter: blur(15px);
+            border-radius: 30px; padding: 15px 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+            z-index: 100;
         }
-
-        .label { font-size: 11px; color: var(--accent); text-transform: uppercase; margin-bottom: 5px; letter-spacing: 1px; }
     </style>
 </head>
 <body>
 
-    <div class="gallery-container" id="my-gallery">
-        <!-- Item 1 -->
-        <a href="menu_page-0001.jpg" 
-           data-pswp-width="1200" 
-           data-pswp-height="1600" 
-           target="_blank" class="gallery-item">
-            <img src="p1.jpg" alt="Menu Página 1" />
+    <header>
+        <h1>O Nosso Menu</h1>
+        <p>Toca numa página para ampliar e fazer zoom</p>
+    </header>
+
+    <div class="menu-feed" id="gallery">
+        <!-- PÁGINA 1 -->
+        <a href="p1.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card">
+            <img src="menu_page-0001.jpg" alt="Entradas">
+            <div class="card-info">
+                <span>Página 1 - Entradas</span>
+                <div class="zoom-icon">AMPLIAR</div>
+            </div>
         </a>
 
-        <!-- Item 2 -->
-        <a href="menu_page-0002.jpg" 
-           data-pswp-width="1200" 
-           data-pswp-height="1600" 
-           target="_blank" class="gallery-item">
-            <img src="p2.jpg" alt="Menu Página 2" />
+        <!-- PÁGINA 2 -->
+        <a href="p2.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card">
+            <img src="menu_page-0002.jpg" alt="Pratos Principais">
+            <div class="card-info">
+                <span>Página 2 - Pratos Principais</span>
+                <div class="zoom-icon">AMPLIAR</div>
+            </div>
         </a>
 
-        <!-- Item 3 (Adiciona quantos quiseres) -->
-        <a href="menu_page-0003.jpg" 
-           data-pswp-width="1200" 
-           data-pswp-height="1600" 
-           target="_blank" class="gallery-item">
-            <img src="p3.jpg" alt="Menu Página 3" />
+        <!-- PÁGINA 3 -->
+        <a href="p3.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card">
+            <img src="menu_page-0003.jpg" alt="Sobremesas e Bebidas">
+            <div class="card-info">
+                <span>Página 3 - Sobremesas</span>
+                <div class="zoom-icon">AMPLIAR</div>
+            </div>
         </a>
     </div>
 
-    <nav id="nav-bar">
-        <div class="label">Toca na imagem para ampliar</div>
-        <div style="font-size: 13px; opacity: 0.8;">Menu Digital Interativo</div>
-    </nav>
+    <div id="nav-bar">
+        <span style="font-size: 0.85rem; letter-spacing: 1px; opacity: 0.9;">DESLIZE PARA BAIXO</span>
+    </div>
 
-    <!-- Scripts da Galeria -->
+    <!-- Script da Galeria Profissional -->
     <script type="module">
         import PhotoSwipeLightbox from 'https://cdnjs.cloudflare.com';
         
         const lightbox = new PhotoSwipeLightbox({
-            gallery: '#my-gallery',
+            gallery: '#gallery',
             children: 'a',
+            // Ativa transições fluidas de abertura/fecho
+            showHideAnimationType: 'zoom', 
             pswpModule: () => import('https://cdnjs.cloudflare.com')
         });
         
