@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Dinâmico de PDF</title>
+    <style>
+        /* CSS INTEGRADO */
+        body { font-family: 'Segoe UI', sans-serif; display: flex; margin: 0; background-color: #f0f2f5; }
+        .container { display: flex; width: 100vw; height: 100vh; overflow: hidden; }
+
+        #pdf-sidebar {
+            width: 280px;
+            background: #ffffff;
+            border-right: 1px solid #ccc;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+
+        #pdf-sidebar h3 { padding: 20px; margin: 0; background: #007bff; color: white; font-size: 1.1rem; }
+
+        #outline-list { list-style: none; padding: 10px; margin: 0; overflow-y: auto; flex-grow: 1; }
+        #outline-list li {
+            padding: 12px 15px;
+            margin-bottom: 5px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background 0.2s;
+            color: #333;
+            font-size: 0.95rem;
+            border-left: 3px solid transparent;
+        }
+        #outline-list li:hover { background: #e9ecef; border-left: 3px solid #007bff; }
+
+        #pdf-viewer-container {
+            flex-grow: 1;
+            overflow-y: auto;
+            background: #525659;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        #pdf-canvas {
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            max-width: 100%;
+            height: auto;
+        }
+
+        .loading-msg { color: #666; padding: 20px; font-style: italic; }
+    </style>
+    
+    <!-- PDF.js via CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <nav id="pdf-sidebar">
+            <h3>Índice do PDF</h3>
+            <ul id="outline-list">
+                <li class="loading-msg">A carregar índice...</li>
+            </ul>
+        </nav>
+
+        <main id="pdf-viewer-container">
+            <canvas id="pdf-canvas"></canvas>
+        </main>
+    </div>
+
+    <script>
+        /* JAVASCRIPT INTEGRADO */
+        
+        // 1. CONFIGURAÇÃO INICIAL
+        const url = 'O_TEU_ARQUIVO.pdf'; // SUBSTITUA PELO NOME DO SEU PDF
+
+        const pdfjsLib = window['pdfjs-dist/build/pdf'];
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+
+        let pdfDoc = null;
+        const canvas = document.getElementById('pdf-canvas');
+        const ctx = canvas.getContext('2d');
+        const outlineList = document.getElementById('outline-list');
+
+        // 2. CARREGAR O DOCUMENTO
+        pdfjsLib.getDocument(url).promise.then(pdf => {
+            pdfDoc = pdf;
+            renderPage(1); // Mostra a primeira página ao carregar
+            loadOutline();
+        }).catch(err => {
+            outlineList.innerHTML = `<li style="color:red">Erro: ${err.message}</li>`;
+        });
+
+        // 3. EXTRAIR O ÍNDICE (OUTLINE)
+        async function loadOutline() {
+            const outline = await pdfDoc.getOutline();
+            outlineList.innerHTML = ''; 
+
+            if (outline && outline.length > 0) {
+                outline.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item.title;
+                    li.onclick = () => handleOutlineClick(item.dest);
+                    outlineList.appendChild(li);
+                });
+            } else {
+                outlineList.innerHTML = '<li>Este PDF não possui índice interno.</li>';
+            }
+        }
+
+        // 4. LÓGICA DE NAVEGAÇÃO
+        async function handleOutlineClick(dest) {
+            if (!dest) return;
+            
+            let pageIdx;
+            // Destinos podem ser nomes (strings) ou referências diretas (arrays)
+            if (typeof dest === 'string') {
+                const explicitDest = await pdfDoc.getDestination(dest);
+                pageIdx = await pdfDoc.getPageIndex(explicitDest[0]);
+            } else {
+                pageIdx = await pdfDoc.getPageIndex(dest[0]);
+            }
+
+            renderPage(pageIdx + 1);
+            // Faz scroll automático para o topo do visualizador
+            document.getElementById('pdf-viewer-container').scrollTop = 0;
+        }
+
+        // 5. RENDERIZAÇÃO DA PÁGINA NO CANVAS
+        function renderPage(num) {
+            pdfDoc.getPage(num).then(page => {
+                const viewport = page.getViewport({ scale: 1.5 });
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                const renderContext = {
+                    canvasContext: ctx,
+                    viewport: viewport
+                };
+                page.render(renderContext);
+            });
+        }
+    </script>
+</body>
+</html>
