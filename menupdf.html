@@ -1,148 +1,108 @@
-<!DOCTYPE html>
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu PDF Ultra-Minimalista</title>
+    <title>Menu PDF Dinâmico</title>
     <style>
-        :root {
-            --glass: rgba(20, 20, 30, 0.9);
-            --accent: #89b4fa;
-            --text: #ffffff;
-        }
-
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #0b0b10; color: white; overflow: hidden; }
+        :root { --accent: #89b4fa; --text: #ffffff; }
+        body { font-family: sans-serif; margin: 0; background: #0b0b10; color: white; overflow: hidden; }
         
-        #pdf-viewer-container {
-            width: 100vw; height: 100vh; overflow-y: auto;
-            display: flex; flex-direction: column; align-items: center;
-            padding: 20px 0; scroll-behavior: smooth;
+        #pdf-viewer-container { 
+            width: 100vw; height: 100vh; overflow-y: auto; 
+            display: flex; flex-direction: column; align-items: center; padding-top: 20px; 
         }
-
-        canvas { box-shadow: 0 0 40px rgba(0,0,0,0.8); max-width: 95%; background: white; margin-bottom: 80px; }
-
-        /* Menu Flutuante */
+        
+        canvas { box-shadow: 0 0 40px rgba(0,0,0,0.8); max-width: 95%; background: white; margin-bottom: 100px; }
+        
+        /* Menu Minimalista Sobreposto */
         #pdf-sidebar {
-            position: fixed; bottom: 25px; left: 50%; transform: translateX(-50%);
-            background: var(--glass); backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 25px;
-            padding: 12px 25px; z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            min-width: 150px; text-align: center;
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: rgba(30, 30, 46, 0.95); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 20px;
+            padding: 12px 25px; z-index: 9999; text-align: center; min-width: 180px;
         }
-
-        #pdf-sidebar h3 { font-size: 0.85rem; margin: 0; color: var(--accent); cursor: pointer; text-transform: uppercase; letter-spacing: 1px; }
 
         #outline-list { 
-            list-style: none; padding: 0; margin: 0; 
-            display: flex; gap: 12px; overflow-x: auto;
-            max-height: 0; opacity: 0; transition: 0.3s ease;
+            list-style: none; padding: 0; margin: 0; display: flex; gap: 10px; 
+            max-height: 0; opacity: 0; overflow-x: auto; transition: 0.4s;
         }
 
-        /* Expansão do Menu */
-        #pdf-sidebar:hover #outline-list {
-            max-height: 250px; opacity: 1; padding-top: 15px; margin-bottom: 5px;
-        }
+        #pdf-sidebar:hover #outline-list { max-height: 150px; opacity: 1; margin-top: 15px; padding-bottom: 5px; }
 
-        #outline-list li {
-            white-space: nowrap; padding: 10px 18px; background: rgba(255,255,255,0.08);
-            border-radius: 15px; cursor: pointer; font-size: 0.85rem; transition: 0.2s;
+        .menu-item { 
+            padding: 8px 15px; background: rgba(255,255,255,0.1); 
+            border-radius: 10px; cursor: pointer; white-space: nowrap; font-size: 14px; 
         }
-
-        #outline-list li:hover { background: var(--accent); color: #11111b; transform: translateY(-3px); }
         
-        #outline-list::-webkit-scrollbar { height: 4px; }
-        #outline-list::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+        .menu-item:hover { background: var(--accent); color: #11111b; }
+        
+        h3 { margin: 0; font-size: 14px; color: var(--accent); cursor: pointer; text-transform: uppercase; }
 
-        .loading-msg { font-size: 0.8rem; opacity: 0.6; }
+        /* Scrollbar do menu */
+        #outline-list::-webkit-scrollbar { height: 3px; }
+        #outline-list::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
     </style>
     <script src="https://cdnjs.cloudflare.com"></script>
 </head>
 <body>
 
-    <main id="pdf-viewer-container">
+    <div id="pdf-viewer-container">
         <canvas id="pdf-canvas"></canvas>
-    </main>
+    </div>
 
     <nav id="pdf-sidebar">
-        <h3 id="menu-title">Carregando Menu...</h3>
+        <h3 id="menu-title">A carregar PDF...</h3>
         <ul id="outline-list"></ul>
     </nav>
 
     <script>
-        // CONFIGURAÇÃO
-        const url = 'menu.pdf'; 
-        
-        // Menu de reserva (caso o PDF não tenha índice automático)
-        const manualMenu = [
-            { title: "Início", page: 1 },
-            { title: "Conteúdo", page: 3 },
-            { title: "Preços", page: 7 },
-            { title: "Contacto", page: 10 }
-        ];
-
+        const pdfUrl = 'menu.pdf'; 
         const pdfjsLib = window['pdfjs-dist/build/pdf'];
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com';
 
-        let pdfDoc = null;
-        const canvas = document.getElementById('pdf-canvas');
-        const ctx = canvas.getContext('2d');
         const list = document.getElementById('outline-list');
         const title = document.getElementById('menu-title');
+        const canvas = document.getElementById('pdf-canvas');
+        const ctx = canvas.getContext('2d');
+        let pdfDoc = null;
 
-        // Inicializar
-        pdfjsLib.getDocument(url).promise.then(pdf => {
+        // Carregar Documento
+        pdfjsLib.getDocument(pdfUrl).promise.then(pdf => {
             pdfDoc = pdf;
-            title.textContent = "Explorar Índice ▾";
-            renderPage(1); 
-            loadMenu();
-        }).catch(err => {
-            title.textContent = "Erro no PDF";
-            list.innerHTML = `<li style="color:red">${err.message}</li>`;
-        });
-
-        async function loadMenu() {
-            const outline = await pdfDoc.getOutline();
-            list.innerHTML = ''; 
-
+            renderPage(1);
+            
+            // Extrair Índice Real do PDF
+            return pdf.getOutline();
+        }).then(outline => {
+            list.innerHTML = '';
             if (outline && outline.length > 0) {
-                // USA ÍNDICE DO PDF
-                outline.forEach(item => createMenuItem(item.title, item.dest));
-            } else {
-                // USA MENU MANUAL SE O PDF ESTIVER "VAZIO"
-                manualMenu.forEach(item => {
+                outline.forEach(item => {
                     const li = document.createElement('li');
+                    li.className = 'menu-item';
                     li.textContent = item.title;
-                    li.onclick = () => renderPage(item.page);
+                    li.onclick = () => navigateTo(item.dest);
                     list.appendChild(li);
                 });
+                title.textContent = "Índice ▾";
+            } else {
+                title.textContent = "PDF sem índice interno";
             }
-        }
+        }).catch(err => {
+            title.textContent = "Erro ao ler menu.pdf";
+            console.error(err);
+        });
 
-        function createMenuItem(label, dest) {
-            const li = document.createElement('li');
-            li.textContent = label;
-            li.onclick = (e) => {
-                e.stopPropagation();
-                handleNav(dest);
-            };
-            list.appendChild(li);
-        }
-
-        async function handleNav(dest) {
+        async function navigateTo(dest) {
             if (!dest) return;
-            try {
-                // Resolve destinos que podem ser nomes ou arrays
-                const explicitDest = (typeof dest === 'string') ? await pdfDoc.getDestination(dest) : dest;
-                const pageIdx = await pdfDoc.getPageIndex(explicitDest[0]);
-                renderPage(pageIdx + 1);
-                document.getElementById('pdf-viewer-container').scrollTop = 0;
-            } catch (e) { console.error("Erro na navegação:", e); }
+            const explicitDest = (typeof dest === 'string') ? await pdfDoc.getDestination(dest) : dest;
+            const pageIdx = await pdfDoc.getPageIndex(explicitDest[0] || explicitDest);
+            renderPage(pageIdx + 1);
+            document.getElementById('pdf-viewer-container').scrollTop = 0;
         }
 
         function renderPage(num) {
             pdfDoc.getPage(num).then(page => {
-                const viewport = page.getViewport({ scale: 1.8 }); // Zoom um pouco maior
+                const viewport = page.getViewport({ scale: 1.5 });
                 canvas.height = viewport.height;
                 canvas.width = viewport.width;
                 page.render({ canvasContext: ctx, viewport: viewport });
