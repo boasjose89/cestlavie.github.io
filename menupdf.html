@@ -3,151 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu Dinâmico de PDF</title>
+    <title>Menu PDF Minimalista</title>
     <style>
         :root {
-            --bg-sidebar: #1e1e2e;
-            --bg-hover: #313244;
+            --glass-bg: rgba(30, 30, 46, 0.85); /* Efeito de vidro escuro */
             --accent: #89b4fa;
-            --text: #cdd6f4;
-            --bg-viewer: #11111b;
+            --text: #ffffff;
         }
 
         body { 
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            font-family: 'Segoe UI', sans-serif; 
             margin: 0; 
-            display: flex; 
-            background-color: var(--bg-viewer); 
-            color: var(--text);
+            background-color: #11111b; 
             overflow: hidden;
-        }
-
-        .container { display: flex; width: 100vw; height: 100vh; }
-
-        /* Sidebar Moderna */
-        #pdf-sidebar {
-            width: 300px;
-            background: var(--bg-sidebar);
             display: flex;
             flex-direction: column;
-            box-shadow: 4px 0 15px rgba(0,0,0,0.3);
-            z-index: 10;
-        }
-
-        #pdf-sidebar h3 { 
-            padding: 25px 20px; 
-            margin: 0; 
-            background: linear-gradient(45deg, #1e1e2e, #2a2a3d);
-            color: var(--accent);
-            font-size: 1.2rem;
-            border-bottom: 1px solid var(--bg-hover);
-            text-align: center;
-            letter-spacing: 1px;
-        }
-
-        #outline-list { 
-            list-style: none; 
-            padding: 15px; 
-            margin: 0; 
-            overflow-y: auto; 
-            flex-grow: 1; 
-        }
-
-        /* Itens do Menu Dinâmicos */
-        #outline-list li {
-            padding: 15px 18px;
-            margin-bottom: 8px;
-            cursor: pointer;
-            border-radius: 10px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            color: var(--text);
-            font-size: 0.95rem;
-            display: flex;
             align-items: center;
-            background: transparent;
         }
 
-        #outline-list li:hover { 
-            background: var(--bg-hover);
-            transform: translateX(8px);
-            color: var(--accent);
-        }
-
-        /* Ícone decorativo antes do texto */
-        #outline-list li::before {
-            content: "📄";
-            margin-right: 12px;
-            font-size: 1rem;
-        }
-
-        /* Scrollbar Fina */
-        #outline-list::-webkit-scrollbar { width: 5px; }
-        #outline-list::-webkit-scrollbar-thumb { background: var(--bg-hover); border-radius: 10px; }
-
-        /* Contentor do PDF */
+        /* Contentor do PDF ocupa o ecrã todo */
         #pdf-viewer-container {
-            flex-grow: 1;
+            width: 100vw;
+            height: 100vh;
             overflow-y: auto;
-            background: var(--bg-viewer);
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 30px;
+            padding: 20px 0;
             scroll-behavior: smooth;
         }
 
         #pdf-canvas {
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-            max-width: 100%;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            max-width: 95%;
             height: auto;
-            border-radius: 4px;
-            background: white; /* Garante que o PDF tenha fundo branco */
+            background: white;
         }
 
-        .loading-msg { color: var(--accent); text-align: center; font-style: italic; opacity: 0.7; }
+        /* MENU MINIMALISTA INFERIOR */
+        #pdf-sidebar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: auto;
+            max-width: 90%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px); /* Efeito de desfoque atrás do menu */
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 10px 20px;
+            z-index: 100;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+        }
+
+        #pdf-sidebar h3 { 
+            font-size: 0.9rem; 
+            margin: 0; 
+            text-align: center; 
+            color: var(--accent);
+            cursor: pointer;
+            padding-bottom: 5px;
+        }
+
+        #outline-list { 
+            list-style: none; 
+            padding: 0; 
+            margin: 0; 
+            display: flex; /* Coloca os itens lado a lado */
+            gap: 15px;
+            overflow-x: auto; /* Permite scroll horizontal se houver muitos itens */
+            max-height: 0; /* Escondido por padrão */
+            opacity: 0;
+            transition: all 0.4s ease;
+        }
+
+        /* Mostrar menu ao passar o rato ou clicar */
+        #pdf-sidebar:hover #outline-list,
+        #pdf-sidebar:active #outline-list {
+            max-height: 200px;
+            opacity: 1;
+            padding-top: 15px;
+            margin-bottom: 10px;
+        }
+
+        #outline-list li {
+            white-space: nowrap; /* Não quebra linha */
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            color: var(--text);
+            transition: 0.2s;
+        }
+
+        #outline-list li:hover {
+            background: var(--accent);
+            color: #11111b;
+        }
+
+        /* Scrollbar fina para o menu horizontal */
+        #outline-list::-webkit-scrollbar { height: 3px; }
+        #outline-list::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+
+        .loading-msg { font-size: 0.8rem; color: var(--accent); }
     </style>
     
-    <!-- PDF.js via CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com"></script>
 </head>
 <body>
 
-    <div class="container">
-        <nav id="pdf-sidebar">
-            <h3>Índice do PDF</h3>
-            <ul id="outline-list">
-                <li class="loading-msg">A ler o documento...</li>
-            </ul>
-        </nav>
+    <main id="pdf-viewer-container">
+        <canvas id="pdf-canvas"></canvas>
+    </main>
 
-        <main id="pdf-viewer-container">
-            <canvas id="pdf-canvas"></canvas>
-        </main>
-    </div>
+    <nav id="pdf-sidebar">
+        <h3>Índice ▾</h3>
+        <ul id="outline-list">
+            <li class="loading-msg">A carregar...</li>
+        </ul>
+    </nav>
 
     <script>
-        /* JAVASCRIPT INTEGRADO */
-        
         const url = 'menu.pdf'; 
 
         const pdfjsLib = window['pdfjs-dist/build/pdf'];
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com';
 
         let pdfDoc = null;
         const canvas = document.getElementById('pdf-canvas');
         const ctx = canvas.getContext('2d');
         const outlineList = document.getElementById('outline-list');
 
-        // Carregar o PDF
         pdfjsLib.getDocument(url).promise.then(pdf => {
             pdfDoc = pdf;
             renderPage(1); 
             loadOutline();
         }).catch(err => {
-            outlineList.innerHTML = `<li style="color:#f38ba8">Erro ao carregar: ${err.message}</li>`;
+            outlineList.innerHTML = `<li>Erro: ${err.message}</li>`;
         });
 
-        // Extrair Índice Dinâmico
         async function loadOutline() {
             const outline = await pdfDoc.getOutline();
             outlineList.innerHTML = ''; 
@@ -156,18 +153,19 @@
                 outline.forEach(item => {
                     const li = document.createElement('li');
                     li.textContent = item.title;
-                    li.onclick = () => handleOutlineClick(item.dest);
+                    li.onclick = (e) => {
+                        e.stopPropagation(); // Evita fechar o menu ao clicar
+                        handleOutlineClick(item.dest);
+                    };
                     outlineList.appendChild(li);
                 });
             } else {
-                outlineList.innerHTML = '<li class="loading-msg">Índice não encontrado. Tenta usar um menu manual.</li>';
+                outlineList.innerHTML = '<li class="loading-msg">Sem índice interno no PDF</li>';
             }
         }
 
-        // Navegação
         async function handleOutlineClick(dest) {
             if (!dest) return;
-            
             let pageIdx;
             if (typeof dest === 'string') {
                 const explicitDest = await pdfDoc.getDestination(dest);
@@ -175,23 +173,16 @@
             } else {
                 pageIdx = await pdfDoc.getPageIndex(dest[0]);
             }
-
             renderPage(pageIdx + 1);
             document.getElementById('pdf-viewer-container').scrollTop = 0;
         }
 
-        // Renderização
         function renderPage(num) {
             pdfDoc.getPage(num).then(page => {
                 const viewport = page.getViewport({ scale: 1.5 });
                 canvas.height = viewport.height;
                 canvas.width = viewport.width;
-
-                const renderContext = {
-                    canvasContext: ctx,
-                    viewport: viewport
-                };
-                page.render(renderContext);
+                page.render({ canvasContext: ctx, viewport: viewport });
             });
         }
     </script>
