@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu PDF Seguro (Sem Eval)</title>
+    <title>Menu PDF Seguro</title>
     <style>
         :root { --accent: #89b4fa; --text: #ffffff; }
-        body { font-family: sans-serif; margin: 0; background: #0b0b10; color: white; overflow: hidden; }
+        body { font-family: sans-serif; margin: 0; background: #0b0b10; color: white; overflow-x: hidden; }
         #pdf-viewer-container { width: 100vw; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; align-items: center; padding-top: 20px; }
         canvas { box-shadow: 0 0 40px rgba(0,0,0,0.8); max-width: 95%; background: white; margin-bottom: 100px; }
         #pdf-sidebar {
@@ -17,14 +17,13 @@
         }
         #outline-list { list-style: none; padding: 0; margin: 0; display: flex; gap: 10px; max-height: 0; opacity: 0; overflow-x: auto; transition: 0.4s; }
         #pdf-sidebar:hover #outline-list { max-height: 150px; opacity: 1; margin-top: 15px; padding-bottom: 5px; }
-        .menu-item { padding: 8px 15px; background: rgba(255,255,255,0.1); border-radius: 10px; cursor: pointer; white-space: nowrap; font-size: 14px; }
+        .menu-item { padding: 8px 15px; background: rgba(255,255,255,0.1); border-radius: 10px; cursor: pointer; white-space: nowrap; font-size: 14px; color: var(--text); }
         .menu-item:hover { background: var(--accent); color: #11111b; }
         h3 { margin: 0; font-size: 14px; color: var(--accent); cursor: pointer; text-transform: uppercase; }
         #outline-list::-webkit-scrollbar { height: 3px; }
         #outline-list::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
     </style>
-    
-    <!-- USANDO VERSÃO ES5 (LEGACY) QUE NÃO USA EVAL() -->
+    <!-- Versão Legacy 2.x -->
     <script src="https://cdnjs.cloudflare.com"></script>
 </head>
 <body>
@@ -34,7 +33,7 @@
     </div>
 
     <nav id="pdf-sidebar">
-        <h3 id="menu-title">A carregar menu...</h3>
+        <h3 id="menu-title">A carregar...</h3>
         <ul id="outline-list"></ul>
     </nav>
 
@@ -42,11 +41,10 @@
         const pdfUrl = 'menu.pdf'; 
 
         window.onload = function() {
-            // Referência para a biblioteca ES5
             const pdfjsLib = window['pdfjs-dist/build/pdf'];
             
-            // CONFIGURAÇÃO CRÍTICA: Desativar funções que causam erro de CSP
-            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com';
+            // DESATIVA O WORKER EXTERNO (Isso evita erros de CSP em muitos servidores)
+            pdfjsLib.GlobalWorkerOptions.workerSrc = ''; 
 
             const list = document.getElementById('outline-list');
             const title = document.getElementById('menu-title');
@@ -54,48 +52,47 @@
             const ctx = canvas.getContext('2d');
             let pdfDoc = null;
 
-            // Opções para evitar avaliação de strings (eval/new Function)
+            // Carregamento com restrições máximas de segurança
             const loadingTask = pdfjsLib.getDocument({
                 url: pdfUrl,
-                isEvalSupported: false, // FORÇA O PDF.JS A NÃO USAR EVAL
-                stopAtErrors: false
+                disableRange: true,
+                disableStream: true,
+                isEvalSupported: false // BLOQUEIA O USO DE EVAL
             });
 
-            loadingTask.promise.then(pdf => {
+            loadingTask.promise.then(function(pdf) {
                 pdfDoc = pdf;
                 renderPage(1);
                 return pdf.getOutline();
-            }).then(outline => {
+            }).then(function(outline) {
                 list.innerHTML = '';
                 if (outline && outline.length > 0) {
-                    outline.forEach(item => {
+                    outline.forEach(function(item) {
                         const li = document.createElement('li');
                         li.className = 'menu-item';
                         li.textContent = item.title;
-                        li.onclick = () => navigateTo(item.dest);
+                        li.onclick = function() { navigateTo(item.dest); };
                         list.appendChild(li);
                     });
                     title.textContent = "Índice ▾";
                 } else {
-                    title.textContent = "PDF sem índice interno";
+                    title.textContent = "PDF sem índice";
                 }
-            }).catch(err => {
-                title.textContent = "Erro ao carregar ficheiro";
-                console.error("Erro CSP ou Caminho:", err);
+            }).catch(function(err) {
+                title.textContent = "Erro de Acesso";
+                console.error("Erro:", err);
             });
 
-            async function navigateTo(dest) {
+            function navigateTo(dest) {
                 if (!dest) return;
-                try {
-                    const explicitDest = (typeof dest === 'string') ? await pdfDoc.getDestination(dest) : dest;
-                    const pageIdx = await pdfDoc.getPageIndex(explicitDest[0] || explicitDest);
-                    renderPage(pageIdx + 1);
+                pdfDoc.getPageIndex(dest).then(function(idx) {
+                    renderPage(idx + 1);
                     document.getElementById('pdf-viewer-container').scrollTop = 0;
-                } catch (e) { console.error(e); }
+                }).catch(function(e) { console.error(e); });
             }
 
             function renderPage(num) {
-                pdfDoc.getPage(num).then(page => {
+                pdfDoc.getPage(num).then(function(page) {
                     const viewport = page.getViewport({ scale: 1.5 });
                     canvas.height = viewport.height;
                     canvas.width = viewport.width;
