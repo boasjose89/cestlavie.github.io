@@ -3,122 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu com Zoom</title>
+    <title>Menu Galeria com Zoom</title>
+    
+    <!-- Estilos da Galeria (PhotoSwipe) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com">
+    
     <style>
         :root { --accent: #89b4fa; --bg: #0b0b10; }
-        body { font-family: sans-serif; margin: 0; background: var(--bg); color: white; overflow: hidden; }
+        body { font-family: sans-serif; margin: 0; background: var(--bg); color: white; }
 
-        /* Contentor que permite zoom e arrasto */
-        #viewport {
-            width: 100vw;
-            height: 100vh;
-            overflow: auto; /* Permite scroll se a imagem for maior que o ecrã */
-            display: flex;
-            justify-content: flex-start;
-            align-items: flex-start;
-            -webkit-overflow-scrolling: touch;
+        /* Grelha da Galeria */
+        .gallery-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2 colunas no mobile */
+            gap: 10px;
+            padding: 15px;
+            padding-bottom: 100px; /* Espaço para o menu */
         }
 
-        /* A imagem começa na largura do ecrã, mas o utilizador pode ampliar */
-        #menu-img {
+        .gallery-item {
             width: 100%;
-            min-width: 100%;
-            height: auto;
-            display: block;
-            transition: transform 0.2s ease;
-            transform-origin: top left;
-            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            cursor: pointer;
+            transition: transform 0.2s;
         }
+
+        .gallery-item:active { transform: scale(0.95); }
+        .gallery-item img { width: 100%; display: block; }
 
         /* Menu Inferior Fixo */
         #nav-bar {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(30, 30, 46, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 25px;
-            padding: 10px 15px;
-            width: 85%;
-            z-index: 1000;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: rgba(30, 30, 46, 0.95); backdrop-filter: blur(10px);
+            border-radius: 25px; padding: 12px; width: 85%; z-index: 100;
+            text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        .scroll-wrapper {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding: 5px 0;
-            scrollbar-width: none;
-        }
-        .scroll-wrapper::-webkit-scrollbar { display: none; }
-
-        .btn-menu {
-            padding: 12px 20px;
-            background: rgba(255,255,255,0.1);
-            border: none;
-            border-radius: 15px;
-            color: white;
-            white-space: nowrap;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .btn-menu:active { background: var(--accent); color: #11111b; }
-        
-        .label { font-size: 11px; color: var(--accent); text-align: center; text-transform: uppercase; margin-bottom: 5px; opacity: 0.8; }
+        .label { font-size: 11px; color: var(--accent); text-transform: uppercase; margin-bottom: 5px; letter-spacing: 1px; }
     </style>
 </head>
 <body>
 
-    <div id="viewport">
-        <!-- Imagem do menu -->
-        <img id="menu-img" src="p1.jpg" alt="Menu">
+    <div class="gallery-container" id="my-gallery">
+        <!-- Item 1 -->
+        <a href="menu_page-0001.jpg" 
+           data-pswp-width="1200" 
+           data-pswp-height="1600" 
+           target="_blank" class="gallery-item">
+            <img src="p1.jpg" alt="Menu Página 1" />
+        </a>
+
+        <!-- Item 2 -->
+        <a href="menu_page-0002.jpg" 
+           data-pswp-width="1200" 
+           data-pswp-height="1600" 
+           target="_blank" class="gallery-item">
+            <img src="p2.jpg" alt="Menu Página 2" />
+        </a>
+
+        <!-- Item 3 (Adiciona quantos quiseres) -->
+        <a href="menu_page-0003.jpg" 
+           data-pswp-width="1200" 
+           data-pswp-height="1600" 
+           target="_blank" class="gallery-item">
+            <img src="p3.jpg" alt="Menu Página 3" />
+        </a>
     </div>
 
     <nav id="nav-bar">
-        <div class="label">Páginas</div>
-        <div class="scroll-wrapper">
-            <!-- Altera os nomes e os ficheiros de imagem aqui -->
-            <button class="btn-menu" onclick="changeImg('menu_page-0001.jpg')">1</button>
-            <button class="btn-menu" onclick="changeImg('menu_page-0002.jpg')">2</button>
-            <button class="btn-menu" onclick="changeImg('menu_page-0003.jpg')">3</button>
-            <button class="btn-menu" onclick="changeImg('menu_page-0004.jpg')">4</button>
-            <button class="btn-menu" onclick="changeImg('menu_page-0005.jpg')">5</button>
-            <button class="btn-menu" onclick="changeImg('menu_page-0006.jpg')">6</button>
-            <button class="btn-menu" onclick="changeImg('menu_page-0007.jpg')">7</button>
-            <button class="btn-menu" onclick="changeImg('menu_page-0008.jpg')">8</button>
-          
-        </div>
+        <div class="label">Toca na imagem para ampliar</div>
+        <div style="font-size: 13px; opacity: 0.8;">Menu Digital Interativo</div>
     </nav>
 
-    <script>
-        function changeImg(src) {
-            const img = document.getElementById('menu-img');
-            const viewport = document.getElementById('viewport');
-            
-            // Troca a imagem
-            img.src = src;
-            
-            // Faz reset ao scroll e ao zoom ao mudar de categoria
-            viewport.scrollTo(0, 0);
-        }
-
-        // Script simples para permitir zoom de duplo toque no telemóvel
-        let lastClick = 0;
-        document.getElementById('menu-img').addEventListener('click', function(e) {
-            let date = new Date().getTime();
-            if (date - lastClick < 300) { // Double click/tap
-                if (this.style.width === "200%") {
-                    this.style.width = "100%";
-                } else {
-                    this.style.width = "200%";
-                }
-            }
-            lastClick = date;
+    <!-- Scripts da Galeria -->
+    <script type="module">
+        import PhotoSwipeLightbox from 'https://cdnjs.cloudflare.com';
+        
+        const lightbox = new PhotoSwipeLightbox({
+            gallery: '#my-gallery',
+            children: 'a',
+            pswpModule: () => import('https://cdnjs.cloudflare.com')
         });
+        
+        lightbox.init();
     </script>
 
 </body>
