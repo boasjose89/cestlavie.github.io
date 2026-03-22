@@ -75,7 +75,7 @@
         /* JAVASCRIPT INTEGRADO */
         
         // 1. CONFIGURAÇÃO INICIAL
-        const url = 'O_TEU_ARQUIVO.pdf'; // SUBSTITUA PELO NOME DO SEU PDF
+        const url = 'menu.pdf'; // SUBSTITUA PELO NOME DO SEU PDF
 
         const pdfjsLib = window['pdfjs-dist/build/pdf'];
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
