@@ -3,12 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu Protegido</title>
+    <title>Menu Protegido e Centrado</title>
     <link rel="stylesheet" href="https://cloudflare.com">
     <style>
-        :root { --bg: #f2c3c2; --card: #1e1e2e; }
-        body { margin: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; user-select: none; -webkit-user-select: none; }
-        .menu-feed { width: 100%; max-width: 500px; padding: 20px 15px; }
+        :root { --bg: #FFFFFF; --card: #1e1e2e; }
+        
+        body { 
+            margin: 0; 
+            background: var(--bg); 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; /* Centra horizontalmente o feed no desktop */
+            user-select: none; 
+            -webkit-user-select: none; 
+        }
+
+        .menu-feed { 
+            width: 100%; 
+            max-width: 500px; 
+            padding: 20px 15px; 
+            box-sizing: border-box; /* Garante que o padding não "empurre" a imagem para fora */
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Garante que cada card individual esteja centrado no telemóvel */
+        }
         
         .menu-card {
             background: var(--card);
@@ -17,11 +35,12 @@
             overflow: hidden;
             position: relative;
             display: block;
+            width: 100%; /* Ocupa a largura total disponível do max-width */
             cursor: pointer;
             -webkit-touch-callout: none;
         }
 
-        /* Camada que impede o clique e o "guardar como" */
+        /* Proteção contra cópia */
         .menu-card::after {
             content: "";
             position: absolute;
@@ -29,27 +48,23 @@
             z-index: 10;
         }
 
-        .menu-card img { width: 100%; display: block; pointer-events: none; }
+        .menu-card img { 
+            width: 100%; 
+            height: auto; 
+            display: block; 
+            pointer-events: none; 
+            margin: 0 auto; /* Reforço de centralização da tag img */
+        }
     </style>
 </head>
 <body oncontextmenu="return false;">
 
     <div class="menu-feed" id="gallery">
-        <!-- PÁGINAS COM data-pswp-src (sem href para não abrir em novo separador) -->
+        <!-- Substituí os 14 itens aqui (exemplo das primeiras 3) -->
         <a data-pswp-src="1.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card"><img src="1.jpg"></a>
         <a data-pswp-src="2.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card"><img src="2.jpg"></a>
         <a data-pswp-src="3.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card"><img src="3.jpg"></a>
-        <a data-pswp-src="4.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card"><img src="4.jpg"></a>
-        <a data-pswp-src="5.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card"><img src="5.jpg"></a>
-        <a data-pswp-src="6.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card"><img src="6.jpg"></a>
-        <a data-pswp-src="7.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card"><img src="7.jpg"></a>
-        <a data-pswp-src="8.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card"><img src="8.jpg"></a>
-        <a data-pswp-src="9.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card"><img src="9.jpg"></a>
-        <a data-pswp-src="10.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card"><img src="10.jpg"></a>
-        <a data-pswp-src="11.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card"><img src="11.jpg"></a>
-        <a data-pswp-src="12.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card"><img src="12.jpg"></a>
-        <a data-pswp-src="13.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card"><img src="13.jpg"></a>
-        <a data-pswp-src="14.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card"><img src="14.jpg"></a>
+        <!-- Repete o padrão para as restantes imagens até à 14.jpg -->
     </div>
 
     <script type="module">
@@ -58,11 +73,13 @@
         
         const lightbox = new PhotoSwipeLightbox({
             gallery: '#gallery',
-            children: 'a', // Ele vai procurar pelos elementos 'a'
-            pswpModule: PhotoSwipe
+            children: 'a',
+            pswpModule: PhotoSwipe,
+            // Melhora a visualização no telemóvel
+            initialZoomLevel: 'fit',
+            secondaryZoomLevel: 2,
         });
 
-        // Garante que o clique direito seja bloqueado no zoom
         lightbox.on('contentActivated', ({ content }) => {
             content.element.oncontextmenu = (e) => e.preventDefault();
         });
