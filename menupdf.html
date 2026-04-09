@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menu Interativo Fluido - Protegido</title>
     
-    <!-- Estilos da Galeria (PhotoSwipe) -->
+    <!-- CSS CORRETO DO PHOTOSWIPE -->
     <link rel="stylesheet" href="https://cloudflare.com">
     
     <style>
@@ -19,18 +19,14 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            /* Proteção: Impede seleção de texto */
             user-select: none;
             -webkit-user-select: none;
         }
 
-        header { padding: 30px 20px; text-align: center; }
-        header h1 { margin: 0; font-size: 1.5rem; color: var(--accent); }
-
         .menu-feed {
             width: 100%;
             max-width: 500px;
-            padding: 0 15px 120px;
+            padding: 20px 15px 120px;
             box-sizing: border-box;
         }
 
@@ -45,13 +41,12 @@
             border: 1px solid rgba(255,255,255,0.05);
             position: relative;
             display: block;
-            /* Proteção: Impede menu "Guardar Imagem" em telemóveis */
             -webkit-touch-callout: none;
         }
 
         .menu-card:active { transform: scale(0.98); }
 
-        /* Camada Invisível: Impede o clique direto na imagem */
+        /* Proteção: Camada invisível sobre a imagem */
         .menu-card::after {
             content: "";
             position: absolute;
@@ -63,83 +58,31 @@
             width: 100%;
             display: block;
             height: auto;
-            /* Proteção: Impede arrastar a imagem para fora do browser */
-            pointer-events: none;
-        }
-
-        #nav-bar {
-            position: fixed; bottom: 25px; 
-            background: rgba(30, 30, 46, 0.8);
-            backdrop-filter: blur(15px);
-            border-radius: 30px; padding: 15px 25px;
-            border: 1px solid rgba(255,255,255,0.1);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-            z-index: 100;
+            pointer-events: none; /* Impede arrastar */
         }
     </style>
 </head>
-<body oncontextmenu="return false;"> <!-- Bloqueia clique direito global -->
+<body oncontextmenu="return false;">
 
     <div class="menu-feed" id="gallery">
-        <!-- PÁGINA 1 -->
-        <a href="1.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card">
-            <img src="1.jpg" alt="Entradas">
-        </a>
-        <!-- PÁGINA 2 -->
-        <a href="2.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card">
-            <img src="2.jpg" alt="Entradas">
-        </a>
-        <!-- PÁGINA 3 -->
-        <a href="3.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card">
-            <img src="3.jpg" alt="Entradas">
-        </a>
-        <!-- PÁGINA 4 -->
-        <a href="4.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card">
-            <img src="4.jpg" alt="Entradas">
-        </a>
-        <!-- PÁGINA 5 -->
-        <a href="5.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card">
-            <img src="5.jpg" alt="Entradas">
-        </a>
-        <!-- PÁGINA 6 -->
-        <a href="6.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card">
-            <img src="6.jpg" alt="Entradas">
-        </a>
-        <!-- PÁGINA 7 -->
-        <a href="7.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card">
-            <img src="7.jpg" alt="Entradas">
-        </a>
-        <!-- PÁGINA 8 -->
-        <a href="8.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card">
-            <img src="8.jpg" alt="Entradas">
-        </a>
-        <!-- PÁGINA 9 -->
-        <a href="9.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card">
-            <img src="9.jpg" alt="Entradas">
-        </a>
-        <!-- PÁGINA 10 -->
-        <a href="10.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card">
-            <img src="10.jpg" alt="Entradas">
-        </a>
-        <!-- PÁGINA 11 -->
-        <a href="11.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card">
-            <img src="11.jpg" alt="Entradas">
-        </a>
-        <!-- PÁGINA 12 -->
-        <a href="12.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card">
-            <img src="12.jpg" alt="Entradas">
-        </a>
-        <!-- PÁGINA 13 -->
-        <a href="13.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card">
-            <img src="13.jpg" alt="Entradas">
-        </a>
-        <!-- PÁGINA 14 -->
-        <a href="14.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card">
-            <img src="14.jpg" alt="Entradas">
-        </a>
+        <!-- Listagem das 14 Imagens -->
+        <a href="1.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card"><img src="1.jpg" alt="Menu"></a>
+        <a href="2.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card"><img src="2.jpg" alt="Menu"></a>
+        <a href="3.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card"><img src="3.jpg" alt="Menu"></a>
+        <a href="4.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card"><img src="4.jpg" alt="Menu"></a>
+        <a href="5.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card"><img src="5.jpg" alt="Menu"></a>
+        <a href="6.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card"><img src="6.jpg" alt="Menu"></a>
+        <a href="7.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card"><img src="7.jpg" alt="Menu"></a>
+        <a href="8.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card"><img src="8.jpg" alt="Menu"></a>
+        <a href="9.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card"><img src="9.jpg" alt="Menu"></a>
+        <a href="10.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card"><img src="10.jpg" alt="Menu"></a>
+        <a href="11.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card"><img src="11.jpg" alt="Menu"></a>
+        <a href="12.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card"><img src="12.jpg" alt="Menu"></a>
+        <a href="13.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card"><img src="13.jpg" alt="Menu"></a>
+        <a href="14.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card"><img src="14.jpg" alt="Menu"></a>
     </div>
 
-    <!-- Script da Galeria e Proteções Extras -->
+    <!-- SCRIPTS CORRETOS E COMPLETOS -->
     <script type="module">
         import PhotoSwipeLightbox from 'https://cloudflare.com';
         import PhotoSwipe from 'https://cloudflare.com';
@@ -150,24 +93,30 @@
             showHideAnimationType: 'zoom', 
             pswpModule: PhotoSwipe
         });
-        
-        // Bloqueia clique direito na imagem enquanto o Zoom está aberto
-        lightbox.on('contentActivated', ({ content }) => {
-            content.element.oncontextmenu = () => false;
-        });
 
+        // BLOQUEIA CLIQUE DIREITO DENTRO DO ZOOM
+        lightbox.on('contentActivated', ({ content }) => {
+            content.element.oncontextmenu = (e) => {
+                e.preventDefault();
+                return false;
+            };
+        });
+        
         lightbox.init();
 
-        // Bloqueio de Teclas de Atalho (Ctrl+S, Ctrl+U, F12)
-        document.addEventListener('keydown', function(e) {
-            if (e.ctrlKey && (e.key === 's' || e.key === 'u' || e.key === 'p')) {
-                e.preventDefault();
-            }
-            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
-                e.preventDefault();
-            }
+        // IMPEDE QUE O CLIQUE ABRA O LINK NUM NOVO SEPARADOR SE A GALERIA FALHAR
+        document.querySelectorAll('.menu-card').forEach(link => {
+            link.addEventListener('click', (e) => {
+                // Se por algum motivo o PhotoSwipe não carregar, isto evita abrir o link direto
+                if(!window.PhotoSwipeLightbox) e.preventDefault();
+            });
+        });
+
+        // BLOQUEIO DE ATALHOS
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && ['s','u','p','i'].includes(e.key.toLowerCase())) e.preventDefault();
+            if (e.key === 'F12') e.preventDefault();
         });
     </script>
-
 </body>
 </html>
