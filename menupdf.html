@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menu Interativo Fluido</title>
+    <title>Menu Interativo Fluido - Protegido</title>
     
-    <!-- Estilos da Galeria (Zoom) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com">
+    <!-- Estilos da Galeria (PhotoSwipe) -->
+    <link rel="stylesheet" href="https://cloudflare.com">
     
     <style>
         :root { --accent: #89b4fa; --bg: #FFFFFF; --card: #1e1e2e; }
@@ -19,13 +19,14 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            /* Proteção: Impede seleção de texto */
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         header { padding: 30px 20px; text-align: center; }
         header h1 { margin: 0; font-size: 1.5rem; color: var(--accent); }
-        header p { margin: 5px 0 0; opacity: 0.6; font-size: 0.9rem; }
 
-        /* Lista de Imagens Fluida */
         .menu-feed {
             width: 100%;
             max-width: 500px;
@@ -42,27 +43,30 @@
             transition: transform 0.3s ease;
             cursor: pointer;
             border: 1px solid rgba(255,255,255,0.05);
+            position: relative;
+            display: block;
+            /* Proteção: Impede menu "Guardar Imagem" em telemóveis */
+            -webkit-touch-callout: none;
         }
 
         .menu-card:active { transform: scale(0.98); }
+
+        /* Camada Invisível: Impede o clique direto na imagem */
+        .menu-card::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 5;
+        }
 
         .menu-card img {
             width: 100%;
             display: block;
             height: auto;
+            /* Proteção: Impede arrastar a imagem para fora do browser */
+            pointer-events: none;
         }
 
-        .card-info {
-            padding: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .card-info span { font-weight: 600; font-size: 0.9rem; }
-        .zoom-icon { color: var(--accent); font-size: 0.8rem; border: 1px solid var(--accent); padding: 4px 8px; border-radius: 10px; }
-
-        /* Menu de Navegação Inferior */
         #nav-bar {
             position: fixed; bottom: 25px; 
             background: rgba(30, 30, 46, 0.8);
@@ -74,86 +78,95 @@
         }
     </style>
 </head>
-<body>
-
-    <header>
-        <h1>O Nosso Menu</h1>
-    </header>
+<body oncontextmenu="return false;"> <!-- Bloqueia clique direito global -->
 
     <div class="menu-feed" id="gallery">
         <!-- PÁGINA 1 -->
         <a href="1.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card">
             <img src="1.jpg" alt="Entradas">
         </a>
-         <!-- PÁGINA 2 -->
+        <!-- PÁGINA 2 -->
         <a href="2.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card">
             <img src="2.jpg" alt="Entradas">
         </a>
-            <!-- PÁGINA 3 -->
+        <!-- PÁGINA 3 -->
         <a href="3.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card">
             <img src="3.jpg" alt="Entradas">
         </a>
-            <!-- PÁGINA 4 -->
+        <!-- PÁGINA 4 -->
         <a href="4.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card">
             <img src="4.jpg" alt="Entradas">
         </a>
-     <!-- PÁGINA 5 -->
+        <!-- PÁGINA 5 -->
         <a href="5.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card">
             <img src="5.jpg" alt="Entradas">
         </a>
-             <!-- PÁGINA 6 -->
+        <!-- PÁGINA 6 -->
         <a href="6.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card">
             <img src="6.jpg" alt="Entradas">
         </a>
-             <!-- PÁGINA 7 -->
+        <!-- PÁGINA 7 -->
         <a href="7.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card">
             <img src="7.jpg" alt="Entradas">
         </a>
-             <!-- PÁGINA 8 -->
+        <!-- PÁGINA 8 -->
         <a href="8.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card">
             <img src="8.jpg" alt="Entradas">
         </a>
-             <!-- PÁGINA 9 -->
+        <!-- PÁGINA 9 -->
         <a href="9.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card">
             <img src="9.jpg" alt="Entradas">
         </a>
-             <!-- PÁGINA 10 -->
+        <!-- PÁGINA 10 -->
         <a href="10.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card">
             <img src="10.jpg" alt="Entradas">
         </a>
-             <!-- PÁGINA 11 -->
+        <!-- PÁGINA 11 -->
         <a href="11.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card">
             <img src="11.jpg" alt="Entradas">
         </a>
-             <!-- PÁGINA 12 -->
+        <!-- PÁGINA 12 -->
         <a href="12.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card">
             <img src="12.jpg" alt="Entradas">
         </a>
-             <!-- PÁGINA 13 -->
+        <!-- PÁGINA 13 -->
         <a href="13.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card">
             <img src="13.jpg" alt="Entradas">
         </a>
-             <!-- PÁGINA 14 -->
+        <!-- PÁGINA 14 -->
         <a href="14.jpg" data-pswp-width="1200" data-pswp-height="1600" class="menu-card">
             <img src="14.jpg" alt="Entradas">
         </a>
     </div>
 
-  
-
-    <!-- Script da Galeria Profissional -->
+    <!-- Script da Galeria e Proteções Extras -->
     <script type="module">
-        import PhotoSwipeLightbox from 'https://cdnjs.cloudflare.com';
+        import PhotoSwipeLightbox from 'https://cloudflare.com';
+        import PhotoSwipe from 'https://cloudflare.com';
         
         const lightbox = new PhotoSwipeLightbox({
             gallery: '#gallery',
             children: 'a',
-            // Ativa transições fluidas de abertura/fecho
             showHideAnimationType: 'zoom', 
-            pswpModule: () => import('https://cdnjs.cloudflare.com')
+            pswpModule: PhotoSwipe
         });
         
+        // Bloqueia clique direito na imagem enquanto o Zoom está aberto
+        lightbox.on('contentActivated', ({ content }) => {
+            content.element.oncontextmenu = () => false;
+        });
+
         lightbox.init();
+
+        // Bloqueio de Teclas de Atalho (Ctrl+S, Ctrl+U, F12)
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && (e.key === 's' || e.key === 'u' || e.key === 'p')) {
+                e.preventDefault();
+            }
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I')) {
+                e.preventDefault();
+            }
+        });
     </script>
 
 </body>
